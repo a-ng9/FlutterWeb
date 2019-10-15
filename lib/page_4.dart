@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:validate/validate.dart';
 import 'package:angel_validate/angel_validate.dart';
+import 'package:web/test.dart';
 
 class PageValidation extends StatefulWidget {
   @override
@@ -9,7 +11,7 @@ class PageValidation extends StatefulWidget {
 
 class _PageValidationState extends State<PageValidation> {
   final formKey = GlobalKey<FormState>();
-  String _name, _lastName, _age, _email;
+  String _userId, _id, _title, _body;
 
   @override
   Widget build(BuildContext context) {
@@ -28,10 +30,9 @@ class _PageValidationState extends State<PageValidation> {
                 child: TextFormField(
                   decoration: InputDecoration(
                     labelStyle: TextStyle(color: Colors.black),
-                    labelText: "First Name",
-                    icon: Icon(Icons.person, color: Colors.black),
+                    labelText: "User ID",
                   ),
-                  onSaved: (String value) => _name = value,
+                  onSaved: (String value) => _userId = value,
                   validator: nameValidator,
                 ),
               ),
@@ -39,38 +40,10 @@ class _PageValidationState extends State<PageValidation> {
                 child: TextFormField(
                   decoration: InputDecoration(
                     labelStyle: TextStyle(color: Colors.black),
-                    labelText: "Last Name",
-                    icon: Icon(Icons.person_outline, color: Colors.black),
+                    labelText: "ID",
                   ),
                   validator: nameValidator,
-                  onSaved: (String value) => _lastName = value,
-                ),
-              ),
-              Container(
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    labelStyle: TextStyle(color: Colors.black),
-                    labelText: "Age",
-                    icon:
-                        Icon(Icons.perm_contact_calendar, color: Colors.black),
-                  ),
-                  keyboardType: TextInputType.number,
-                  validator: numberValidator,
-                  onSaved: (String value) => _age = value,
-                ),
-              ),
-              Container(
-                height: 100,
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    labelStyle: TextStyle(color: Colors.black),
-                    labelText: "Email",
-                    icon: Icon(Icons.email, color: Colors.black),
-                  ),
-                  validator: _validateEmail,
-                  // validator: (input) =>
-                  //     !input.contains('@') ? 'Not valid email' : null,
-                  onSaved: (String value) => _email = value,
+                  onSaved: (String value) => _id = value,
                 ),
               ),
               Row(
@@ -90,6 +63,28 @@ class _PageValidationState extends State<PageValidation> {
           ),
         ),
       ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.teal,
+        shape: CircularNotchedRectangle(),
+        notchMargin: 4.0,
+        child: Row(
+          children: <Widget>[
+            SizedBox(
+              height: 50,
+            )
+          ],
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.arrow_forward),
+        onPressed: () {
+          createPost().then((response) {});
+          print("Navigation button pressed");
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => MyTest()));
+        },
+      ),
     );
   }
 
@@ -107,9 +102,9 @@ class _PageValidationState extends State<PageValidation> {
       return "Cannot Be empty";
     }
 
-    if (value.length < 4) {
-      return "Name must be more than 4 character.";
-    }
+    // if (value.length < 4) {
+    //   return "Name must be more than 4 character.";
+    // }
     return null;
   }
 
