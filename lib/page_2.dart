@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:web/utils/api_manager.dart';
 import 'package:web/model/post_model.dart';
+import 'package:web/page_3.dart';
 
 class PageListView extends StatefulWidget {
   @override
@@ -41,6 +42,27 @@ class _PageListViewState extends State<PageListView> {
                 return _buildCell(_allUsers[index]);
               },
             ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.teal,
+        shape: CircularNotchedRectangle(),
+        notchMargin: 4.0,
+        child: Row(
+          children: <Widget>[
+            SizedBox(
+              height: 50,
+            )
+          ],
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.arrow_forward),
+        onPressed: () {
+          print("Navigation button pressed");
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => PageCard()));
+        },
+      ),
     );
   }
 

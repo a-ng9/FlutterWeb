@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web/page_4.dart';
 
 class PageCard extends StatelessWidget {
   @override
@@ -65,6 +66,8 @@ class PageCard extends StatelessWidget {
         child: Icon(Icons.arrow_forward),
         onPressed: () {
           print("Navigation button pressed");
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => PageValidation()));
         },
       ),
     );
