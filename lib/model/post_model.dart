@@ -13,19 +13,9 @@ String postToJson(Post data) {
   return json.encode(dyn);
 }
 
-List<Post> allPostsFromJson(String str) {
-  final jsonData = json.decode(str);
-  return new List<Post>.from(jsonData.map((x) => Post.fromJson(x)));
-}
-
-String allPostsToJson(List<Post> data) {
-  final dyn = new List<dynamic>.from(data.map((x) => x.toJson()));
-  return json.encode(dyn);
-}
-
 class Post {
-  int userId;
-  int id;
+  String userId;
+  String id;
   String title;
   String body;
 
@@ -49,4 +39,13 @@ class Post {
         "title": title,
         "body": body,
       };
+
+  Map toMap() {
+    var map = new Map<String, dynamic>();
+    map["userId"] = userId;
+    map["title"] = title;
+    map["body"] = body;
+
+    return map;
+  }
 }

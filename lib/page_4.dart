@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:validate/validate.dart';
-import 'package:angel_validate/angel_validate.dart';
-import 'package:web/test.dart';
+import 'package:web/model/post_model.dart';
+// import 'package:validate/validate.dart';
+// import 'package:web/test.dart';
+import 'package:web/utils/api_manager.dart';
 
 class PageValidation extends StatefulWidget {
   @override
@@ -12,6 +13,8 @@ class PageValidation extends StatefulWidget {
 class _PageValidationState extends State<PageValidation> {
   final formKey = GlobalKey<FormState>();
   String _userId, _id, _title, _body;
+  String _url =
+      "https://docs.google.com/spreadsheets/d/1-R7mtYeQm05F22LGGMix5cX-PVwsTs3XnuYDWGrMq0k/edit#gid=0";
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +24,7 @@ class _PageValidationState extends State<PageValidation> {
         title: Text("Validation"),
       ),
       body: Form(
-        autovalidate: true,
+        // autovalidate: true,
         key: formKey,
         child: SingleChildScrollView(
           child: Column(
@@ -38,22 +41,42 @@ class _PageValidationState extends State<PageValidation> {
               ),
               Container(
                 child: TextFormField(
-                  decoration: InputDecoration(
-                    labelStyle: TextStyle(color: Colors.black),
-                    labelText: "ID",
-                  ),
-                  validator: nameValidator,
-                  onSaved: (String value) => _id = value,
-                ),
+                    decoration: InputDecoration(
+                      labelStyle: TextStyle(color: Colors.black),
+                      labelText: "ID",
+                    ),
+                    validator: nameValidator,
+                    onSaved: (String value) => _id = value),
+              ),
+              TextFormField(
+                //controller: titleControler,
+                decoration: InputDecoration(
+                    hintText: "title....", labelText: 'Post Title'),
+                onSaved: (String value) => _title = value,
+              ),
+              TextFormField(
+                //controller: bodyControler,
+                decoration: InputDecoration(
+                    hintText: "body....", labelText: 'Post Body'),
+                onSaved: (String value) => _body = value,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
                   RaisedButton(
-                    child: Text("Validate"),
-                    onPressed: () {
+                    child: Text("Create"),
+                    onPressed: () async {
                       if (formKey.currentState.validate()) {
                         formKey.currentState.save();
+
+                        Post newPost = Post(
+                          userId: "123",
+                          id: "0",
+                          title: _title,
+                          body: _body,
+                        );
+                        Post p = await createPost(_url, body: newPost.toMap());
+                        print(p.title);
                       }
                     },
                   ),
@@ -79,29 +102,31 @@ class _PageValidationState extends State<PageValidation> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.arrow_forward),
         onPressed: () {
-          createPost().then((response) {});
           print("Navigation button pressed");
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => MyTest()));
+          // Navigator.push(
+          //     context, MaterialPageRoute(builder: (context) => MyTest()));
         },
       ),
     );
   }
 
-  String _validateEmail(String value) {
-    try {
-      Validate.isEmail(value);
-    } catch (e) {
-      return 'Invalid Email';
-    }
-    return null;
-  }
+  // String _validateEmail(String value) {
+  //   try {
+  //     Validate.isEmail(value);
+  //   } catch (e) {
+  //     return 'Invalid Email';
+  //   }
+  //   return null;
+  // }
 
   String nameValidator(String value) {
     if (value.isEmpty) {
       return "Cannot Be empty";
     }
-
+    final n = num.tryParse(value);
+    if (n == null) {
+      return '$value is not a valid number';
+    }
     // if (value.length < 4) {
     //   return "Name must be more than 4 character.";
     // }
@@ -109,9 +134,6 @@ class _PageValidationState extends State<PageValidation> {
   }
 
   String numberValidator(String value) {
-    if (value == null) {
-      return null;
-    }
     final n = num.tryParse(value);
     if (n == null) {
       return '$value is not a valid number';
