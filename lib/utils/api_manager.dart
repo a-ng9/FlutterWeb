@@ -2,15 +2,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'package:web/model/post_model.dart';
-import 'dart:io';
 
 String url = 'https://jsonplaceholder.typicode.com/posts';
-String _url =
-    "https://docs.google.com/spreadsheets/d/1-R7mtYeQm05F22LGGMix5cX-PVwsTs3XnuYDWGrMq0k/edit#gid=0";
 
 class APIManager {
-  // static final String url = "https://jsonplaceholder.typicode.com/posts";
-
+//GET request with future
   static Future<List<Post>> getUsers() async {
     try {
       final response = await http.get("$url");
@@ -23,15 +19,36 @@ class APIManager {
       throw Exception(e);
     }
   }
-}
 
-Future<Post> createPost(String _url, {Map body}) async {
-  return http.post(url, body: body).then((http.Response response) {
-    final int statusCode = response.statusCode;
+//POST request with future
+  static Future<void> postUser(
+      String id, String userid, String title, String body) async {
+//recreated the post model in here because I was having problems converting integer to string
+//and it is also case sensitive
+    final data = {
+      'data': [
+        {
+          'id': id,
+          'userid': userid,
+          'title': title,
+          'body': body,
+        }
+      ]
+    };
+    final encoded = json.encode(data);
+    // print('encoded: $encoded');
 
-    if (statusCode < 200 || statusCode > 400 || json == null) {
-      throw new Exception("Error while fetching data");
+    try {
+      // final response =
+      await http.post(
+        'https://sheetdb.io/api/v1/lbd0m4scw6ml0',
+        headers: {"Content-Type": "application/json"},
+        body: encoded,
+      );
+
+      // print('response: ${response.body}');
+    } on Exception catch (e) {
+      throw Exception(e);
     }
-    return Post.fromJson(json.decode(response.body));
-  });
+  }
 }

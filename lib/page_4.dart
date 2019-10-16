@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'package:web/model/post_model.dart';
-// import 'package:validate/validate.dart';
-// import 'package:web/test.dart';
 import 'package:web/utils/api_manager.dart';
 
 class PageValidation extends StatefulWidget {
@@ -12,52 +8,35 @@ class PageValidation extends StatefulWidget {
 
 class _PageValidationState extends State<PageValidation> {
   final formKey = GlobalKey<FormState>();
-  String _userId, _id, _title, _body;
-  String _url =
-      "https://docs.google.com/spreadsheets/d/1-R7mtYeQm05F22LGGMix5cX-PVwsTs3XnuYDWGrMq0k/edit#gid=0";
+  String _id, _userId, _title, _body;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("Validation"),
+        title: Text("Validation form"),
       ),
       body: Form(
-        // autovalidate: true,
         key: formKey,
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              Container(
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    labelStyle: TextStyle(color: Colors.black),
-                    labelText: "User ID",
-                  ),
-                  onSaved: (String value) => _userId = value,
+              TextFormField(
+                  decoration: InputDecoration(labelText: "ID"),
                   validator: nameValidator,
-                ),
-              ),
-              Container(
-                child: TextFormField(
-                    decoration: InputDecoration(
-                      labelStyle: TextStyle(color: Colors.black),
-                      labelText: "ID",
-                    ),
-                    validator: nameValidator,
-                    onSaved: (String value) => _id = value),
+                  onSaved: (String value) => _id = value),
+              TextFormField(
+                decoration: InputDecoration(labelText: "User ID"),
+                onSaved: (String value) => _userId = value,
+                validator: nameValidator,
               ),
               TextFormField(
-                //controller: titleControler,
-                decoration: InputDecoration(
-                    hintText: "title....", labelText: 'Post Title'),
+                decoration: InputDecoration(labelText: 'Post Title'),
                 onSaved: (String value) => _title = value,
               ),
               TextFormField(
-                //controller: bodyControler,
-                decoration: InputDecoration(
-                    hintText: "body....", labelText: 'Post Body'),
+                decoration: InputDecoration(labelText: 'Post Body'),
                 onSaved: (String value) => _body = value,
               ),
               Row(
@@ -68,15 +47,7 @@ class _PageValidationState extends State<PageValidation> {
                     onPressed: () async {
                       if (formKey.currentState.validate()) {
                         formKey.currentState.save();
-
-                        Post newPost = Post(
-                          userId: "123",
-                          id: "0",
-                          title: _title,
-                          body: _body,
-                        );
-                        Post p = await createPost(_url, body: newPost.toMap());
-                        print(p.title);
+                        APIManager.postUser(_id, _userId, _title, _body);
                       }
                     },
                   ),
@@ -102,7 +73,7 @@ class _PageValidationState extends State<PageValidation> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.arrow_forward),
         onPressed: () {
-          print("Navigation button pressed");
+          // print("Navigation button pressed");
           // Navigator.push(
           //     context, MaterialPageRoute(builder: (context) => MyTest()));
         },
@@ -110,15 +81,9 @@ class _PageValidationState extends State<PageValidation> {
     );
   }
 
-  // String _validateEmail(String value) {
-  //   try {
-  //     Validate.isEmail(value);
-  //   } catch (e) {
-  //     return 'Invalid Email';
-  //   }
-  //   return null;
-  // }
-
+//
+// Code below are functions for the validator
+//
   String nameValidator(String value) {
     if (value.isEmpty) {
       return "Cannot Be empty";
@@ -138,9 +103,9 @@ class _PageValidationState extends State<PageValidation> {
     if (n == null) {
       return '$value is not a valid number';
     }
-    if (value.length > 2) {
-      return "Age cannot be more than 2 digits";
-    }
+    // if (value.length > 3) {
+    //   return " number cannot be more than 2 digits";
+    // }
     return null;
   }
 }

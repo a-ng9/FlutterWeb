@@ -3,19 +3,9 @@ import 'dart:convert';
 List<Post> userFromJson(String str) =>
     new List<Post>.from(json.decode(str).map((x) => Post.fromJson(x)));
 
-Post postFromJson(String str) {
-  final jsonData = json.decode(str);
-  return Post.fromJson(jsonData);
-}
-
-String postToJson(Post data) {
-  final dyn = data.toJson();
-  return json.encode(dyn);
-}
-
 class Post {
-  String userId;
-  String id;
+  int userId;
+  int id;
   String title;
   String body;
 
@@ -39,13 +29,4 @@ class Post {
         "title": title,
         "body": body,
       };
-
-  Map toMap() {
-    var map = new Map<String, dynamic>();
-    map["userId"] = userId;
-    map["title"] = title;
-    map["body"] = body;
-
-    return map;
-  }
 }
